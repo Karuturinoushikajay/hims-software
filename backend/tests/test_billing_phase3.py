@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from django.conf import settings
 from rest_framework.test import APIClient
 
 from apps.accounts.models import User
@@ -15,7 +16,7 @@ def _login(username="cashier"):
     client = APIClient()
     res = client.post(
         "/api/v1/auth/login",
-        {"username": username, "password": "ChangeMeDemo!2026"},
+        {"username": username, "password": settings.DEMO_SEED_PASSWORD},
         format="json",
     )
     assert res.status_code == 200, res.data

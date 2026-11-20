@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from django.conf import settings
 from rest_framework.test import APIClient
 
 from apps.billing.models import Bill
@@ -12,7 +13,7 @@ def _login(username="receptionist"):
     client = APIClient()
     res = client.post(
         "/api/v1/auth/login",
-        {"username": username, "password": "ChangeMeDemo!2026"},
+        {"username": username, "password": settings.DEMO_SEED_PASSWORD},
         format="json",
     )
     assert res.status_code == 200, res.data
@@ -21,7 +22,6 @@ def _login(username="receptionist"):
 
 @pytest.mark.django_db
 def test_register_posts_fee_and_uhid(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     client = _login()
     res = client.post(
         "/api/v1/patients/register",
@@ -41,7 +41,6 @@ def test_register_posts_fee_and_uhid(seeded_db, settings):
 
 @pytest.mark.django_db
 def test_duplicate_mobile_requires_confirmation(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     client = _login()
     body = {"first_name": "Anita", "gender": "F", "mobile": "9811111111", "age_years": 32}
     assert client.post("/api/v1/patients/register", body, format="json").status_code == 201
@@ -59,7 +58,6 @@ def test_duplicate_mobile_requires_confirmation(seeded_db, settings):
 
 @pytest.mark.django_db
 def test_search_by_mobile_and_abha(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     client = _login()
     created = client.post(
         "/api/v1/patients/register",
@@ -81,7 +79,6 @@ def test_search_by_mobile_and_abha(seeded_db, settings):
 
 @pytest.mark.django_db
 def test_consultation_discount_limit_and_share(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     client = _login()
     patient = client.post(
         "/api/v1/patients/register",
@@ -138,7 +135,6 @@ def test_consultation_discount_limit_and_share(seeded_db, settings):
 
 @pytest.mark.django_db
 def test_walk_in_token_and_cashier_cannot_register(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     receptionist = _login()
     patient = receptionist.post(
         "/api/v1/patients/register",
@@ -170,7 +166,6 @@ def test_walk_in_token_and_cashier_cannot_register(seeded_db, settings):
 
 @pytest.mark.django_db
 def test_repeat_register_with_same_idempotency_key(seeded_db, settings):
-    settings.DEMO_SEED_PASSWORD = "ChangeMeDemo!2026"
     client = _login()
     body = {"first_name": "Lata", "gender": "F", "mobile": "9855555555", "age_years": 44}
     first = client.post(
