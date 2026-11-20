@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: hims
+          POSTGRES_USER: hims
+          POSTGRES_PASSWORD: hims_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hims -d hims"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DEBUG: "true"
+      SECRET_KEY: ci-secret-key
+      POSTGRES_DB: hims
+      POSTGRES_USER: hims
+      POSTGRES_PASSWORD: hims_ci
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      REDIS_URL: redis://localhost:6379/0
+      CELERY_BROKER_URL: redis://localhost:6379/1
+      DEMO_SEED_PASSWORD: CiDemoPassword!2026
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      CSRF_TRUSTED_ORIGINS: http://localhost:5173
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Ruff
+        run: ruff check .
+      - name: Migrate
+        run: python manage.py migrate --noinput
+      - name: Seed
+        run: python manage.py seed_demo --force
+      - name: Pytest
+        run: pytest -q
+      - name: Backup restore drill
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+          python manage.py backup_restore_drill
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: npm test -- --run
