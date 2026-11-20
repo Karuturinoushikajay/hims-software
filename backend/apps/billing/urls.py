@@ -1,0 +1,47 @@
+from django.urls import path
+
+from apps.billing.views import (
+    AdvanceListView,
+    ApplyAdvanceView,
+    AuthorizeRefundView,
+    BillDetailView,
+    BillListView,
+    BillPdfView,
+    CancelBillView,
+    ChargeView,
+    CloseShiftView,
+    CollectDueView,
+    CreditNoteView,
+    DayCloseView,
+    DecideDiscountView,
+    DiscountRequestView,
+    RefundAdvanceView,
+    RefundListView,
+    ShiftView,
+    TaxCategoryView,
+)
+
+urlpatterns = [
+    path("billing/tax-categories", TaxCategoryView.as_view(), name="billing-tax-categories"),
+    path("billing/charges", ChargeView.as_view(), name="billing-charges"),
+    path("billing/bills", BillListView.as_view(), name="billing-bills"),
+    path("billing/bills/<uuid:bill_id>", BillDetailView.as_view(), name="billing-bill"),
+    path("billing/bills/<uuid:bill_id>/pdf", BillPdfView.as_view(), name="billing-bill-pdf"),
+    path("billing/bills/<uuid:bill_id>/cancel", CancelBillView.as_view(), name="billing-cancel"),
+    path("billing/collect", CollectDueView.as_view(), name="billing-collect"),
+    path("billing/advances", AdvanceListView.as_view(), name="billing-advances"),
+    path("billing/advances/<uuid:advance_id>/apply", ApplyAdvanceView.as_view(), name="billing-advance-apply"),
+    path("billing/advances/<uuid:advance_id>/refund", RefundAdvanceView.as_view(), name="billing-advance-refund"),
+    path("billing/refunds", RefundListView.as_view(), name="billing-refunds"),
+    path("billing/refunds/<uuid:refund_id>/authorize", AuthorizeRefundView.as_view(), name="billing-refund-authorize"),
+    path("billing/credit-notes", CreditNoteView.as_view(), name="billing-credit-notes"),
+    path("billing/shifts", ShiftView.as_view(), name="billing-shifts"),
+    path("billing/shifts/close", CloseShiftView.as_view(), name="billing-shift-close"),
+    path("billing/day-close", DayCloseView.as_view(), name="billing-day-close"),
+    path("billing/discount-requests", DiscountRequestView.as_view(), name="billing-discount-requests"),
+    path(
+        "billing/discount-requests/<uuid:request_id>/decide",
+        DecideDiscountView.as_view(),
+        name="billing-discount-decide",
+    ),
+]
