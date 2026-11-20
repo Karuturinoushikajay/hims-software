@@ -171,7 +171,7 @@ Patients, tariffs, bills, GST math, clinical data, lab, pharmacy, IPD, report ex
 | Phase | Focus |
 |---|---|
 | 0 | Foundation (this document) |
-| 1 | Masters |
+| 1 | Masters (departments through geography; editable at `/masters`) |
 | 2 | Patient and OPD |
 | 3 | Billing engine |
 | 4 | Clinical EMR |

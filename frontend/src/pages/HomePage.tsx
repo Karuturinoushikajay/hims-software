@@ -29,7 +29,9 @@ export function HomePage({ me }: { me: Me }) {
             </p>
           )}
           <p className="text-slate-500">
-            Phase 3 billing is live: dues, advances, refunds, credit notes, printouts, and day close.
+            Masters are editable under Masters: departments, doctors, services, wards, tariffs, taxes,
+            discounts, and templates. Phase 3 billing is live: dues, advances, refunds, credit notes,
+            printouts, and day close.
             GST is calculated only after the facility GSTIN is confirmed. Referral commission runs only
             after the TDS rate is confirmed.
           </p>

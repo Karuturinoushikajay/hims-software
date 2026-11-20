@@ -66,7 +66,13 @@ def split_discount(hospital: Decimal, doctor: Decimal, discount: Decimal) -> tup
 
 
 def _assert_discount_allowed(user, facility, gross, discount_type, discount_value, discount_amount):
+    from apps.masters.services import facility_discount_ceiling
+
     max_percent, max_amount = _role_limits(user, facility)
+    ceiling = facility_discount_ceiling(facility)
+    if ceiling is not None:
+        max_percent = min(max_percent, ceiling[0])
+        max_amount = min(max_amount, ceiling[1])
     if discount_type == DiscountType.PERCENT and money(discount_value) > money(max_percent):
         raise AppError(
             f"Discount exceeds your limit of {max_percent}%.",
@@ -233,6 +239,9 @@ def collect_due(*, bill: Bill, actor, amount: Decimal, mode: str, idempotency_ke
         raise AppError("Collection must be greater than 0 and not more than the due.", code="bad_payment")
     if mode not in PaymentMode.values:
         raise AppError("Unknown payment mode.", code="bad_payment")
+    from apps.masters.services import assert_payment_mode_active
+
+    assert_payment_mode_active(bill.facility, mode)
     _add_payment(bill=bill, actor=actor, amount=amount, mode=mode, idempotency_key=idempotency_key)
     from apps.audit.services import record_audit
 

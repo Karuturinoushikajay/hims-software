@@ -26,3 +26,6 @@ Thumbs.db
 .vscode/
 *.swp
 .docker-data/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

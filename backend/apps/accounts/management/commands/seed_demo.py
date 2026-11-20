@@ -44,6 +44,8 @@ PERMISSIONS = [
     ("billing.authorize_refund", "billing", "authorize_refund", "Authorize a refund above the threshold"),
     ("billing.day_close", "billing", "day_close", "Close or reopen the business day"),
     ("billing.discount_authorize", "billing", "discount_authorize", "Approve a discount above the requester limit"),
+    ("masters.read", "masters", "read", "View hospital masters"),
+    ("masters.write", "masters", "write", "Create and update hospital masters"),
 ]
 
 SCREENS = [
@@ -58,6 +60,7 @@ SCREENS = [
     ("consult", "opd", "Consultation", "/consult", 80),
     ("procedures", "opd", "Procedures", "/procedures", 90),
     ("billing", "billing", "Billing", "/billing", 100),
+    ("masters", "admin", "Masters", "/masters", 55),
 ]
 
 ROLE_DEFS = [
@@ -104,6 +107,8 @@ ROLE_PERMS = {
         "billing.authorize_refund",
         "billing.day_close",
         "billing.discount_authorize",
+        "masters.read",
+        "masters.write",
     ],
     "RECEPTIONIST": [
         "home.view",
@@ -144,7 +149,13 @@ ROLE_PERMS = {
         "billing.discount_authorize",
         "opd.consult.create",
     ],
-    "MANAGER": ["home.view", "audit.read", "numbering.read", "organizations.settings.read"],
+    "MANAGER": [
+        "home.view",
+        "audit.read",
+        "numbering.read",
+        "organizations.settings.read",
+        "masters.read",
+    ],
 }
 
 ROLE_SCREENS = {
@@ -405,8 +416,97 @@ def _seed_opd_masters(facility):
             "is_active": True,
         },
     )
+    from apps.masters.models import (
+        Bed,
+        City,
+        Country,
+        DiscountRule,
+        DocumentTemplate,
+        PaymentModeConfig,
+        Room,
+        RoomType,
+        Service,
+        State,
+        Ward,
+    )
+
+    india, _ = Country.objects.get_or_create(name="India")
+    telangana, _ = State.objects.get_or_create(country=india, name="Telangana")
+    hyderabad, _ = City.objects.get_or_create(state=telangana, name="Hyderabad")
     Area.objects.get_or_create(
-        country="India", state="Telangana", city="Hyderabad", name="Ameerpet"
+        country="India",
+        state="Telangana",
+        city="Hyderabad",
+        name="Ameerpet",
+        defaults={"city_ref": hyderabad},
+    )
+    for code, label in (
+        ("CASH", "Cash"),
+        ("CARD", "Card"),
+        ("UPI", "UPI"),
+        ("CHEQUE", "Cheque"),
+        ("TRANSFER", "Bank Transfer"),
+    ):
+        PaymentModeConfig.objects.update_or_create(
+            facility=facility, code=code, defaults={"name": label, "is_active": True}
+        )
+    DiscountRule.objects.update_or_create(
+        facility=facility,
+        name="Facility ceiling",
+        defaults={"max_percent": Decimal("100.00"), "max_flat": Decimal("999999999.99"), "is_active": True},
+    )
+    for name in ("ER Ward", "General Ward", "ICU", "Step Down ICU", "Special Rooms"):
+        RoomType.objects.update_or_create(facility=facility, name=name, defaults={"is_active": True})
+    general = RoomType.objects.get(facility=facility, name="General Ward")
+    ward, _ = Ward.objects.update_or_create(
+        facility=facility, name="General Ward A", defaults={"room_type": general, "is_active": True}
+    )
+    room, _ = Room.objects.update_or_create(ward=ward, name="101", defaults={"is_active": True})
+    for code in ("101-A", "101-B"):
+        Bed.objects.update_or_create(room=room, code=code, defaults={"status": "VACANT", "is_active": True})
+    Service.objects.update_or_create(
+        facility=facility,
+        code="NURSING",
+        defaults={
+            "name": "Nursing charges",
+            "service_type": "ROOM",
+            "charge_unit": "DAILY",
+            "amount": Decimal("500.00"),
+            "hospital_share": Decimal("500.00"),
+            "doctor_share": Decimal("0.00"),
+            "is_active": True,
+        },
+    )
+    Service.objects.update_or_create(
+        facility=facility,
+        code="OXYGEN",
+        defaults={
+            "name": "Oxygen per day",
+            "service_type": "GENERAL",
+            "charge_unit": "DAILY",
+            "amount": Decimal("800.00"),
+            "hospital_share": Decimal("800.00"),
+            "doctor_share": Decimal("0.00"),
+            "is_active": True,
+        },
+    )
+    DocumentTemplate.objects.update_or_create(
+        facility=facility,
+        name="OPD prescription",
+        defaults={
+            "kind": "PRESCRIPTION",
+            "body": "Rx\n1. \nAdvice: \nReview: ",
+            "is_active": True,
+        },
+    )
+    DocumentTemplate.objects.update_or_create(
+        facility=facility,
+        name="Discharge summary",
+        defaults={
+            "kind": "DISCHARGE",
+            "body": "Diagnosis:\nTreatment given:\nAdvice on discharge:\n",
+            "is_active": True,
+        },
     )
     from apps.billing.models import TaxCategory
 
