@@ -13,6 +13,7 @@ import { ConsultPage } from "@/pages/ConsultPage";
 import { BillingPage } from "@/pages/BillingPage";
 import { EmrPage } from "@/pages/EmrPage";
 import { MastersPage } from "@/pages/MastersPage";
+import { IpdPage } from "@/pages/IpdPage";
 import { LaboratoryPage } from "@/pages/LaboratoryPage";
 import { PharmacyPage } from "@/pages/PharmacyPage";
 import { ProceduresPage } from "@/pages/ProceduresPage";
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="/pharmacy" element={<PharmacyPage />} />
         <Route path="/laboratory" element={<LaboratoryPage />} />
         <Route path="/radiology" element={<RadiologyPage />} />
+        <Route path="/ipd" element={<IpdPage />} />
         <Route path="/procedures" element={<ProceduresPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

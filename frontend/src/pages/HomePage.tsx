@@ -29,10 +29,9 @@ export function HomePage({ me }: { me: Me }) {
             </p>
           )}
           <p className="text-slate-500">
-            Through Phase 7: masters, OPD, billing, clinical EMR, pharmacy, laboratory, and radiology
-            at /radiology (test master, scheduling, reporting, consumables, PDF reports). GST is
-            calculated only after the facility GSTIN is confirmed. Referral commission runs only after
-            the TDS rate is confirmed.
+            Through Phase 8: masters, OPD, billing, clinical EMR, pharmacy, laboratory, radiology, and
+            in-patient at /ipd (admission, bed board, transfers, daily charges, nursing/MAR, discharge
+            settlement, certificates). GST is calculated only after the facility GSTIN is confirmed.
           </p>
         </CardContent>
       </Card>

@@ -40,7 +40,7 @@ export function AppShell({ me, onLogout, onFacilityChange }: Props) {
       <aside className="border-r border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-4 py-4">
           <div className="text-lg font-bold text-brand-700">{t("appName")}</div>
-          <div className="text-xs text-slate-500">Masters · OPD · Billing · EMR · Pharmacy · Lab · Rad</div>
+          <div className="text-xs text-slate-500">Masters · OPD · Billing · EMR · Pharmacy · Lab · Rad · IPD</div>
         </div>
         <nav className="flex flex-col gap-1 p-3" aria-label="Main">
           {screens.map((s) => (

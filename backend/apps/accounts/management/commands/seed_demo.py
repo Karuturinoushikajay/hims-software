@@ -68,6 +68,14 @@ PERMISSIONS = [
     ("radiology.report", "radiology", "report", "Draft radiology reports"),
     ("radiology.authorize", "radiology", "authorize", "Authorize and dispatch radiology reports"),
     ("radiology.adjust", "radiology", "adjust", "Adjust radiology consumable stock"),
+    ("ipd.read", "ipd", "read", "View admissions, bed board, and IP records"),
+    ("ipd.admit", "ipd", "admit", "Admit patients and cancel active admissions"),
+    ("ipd.transfer", "ipd", "transfer", "Transfer doctor or bed"),
+    ("ipd.nurse", "ipd", "nurse", "Nursing notes, vitals, MAR, and diet"),
+    ("ipd.order", "ipd", "order", "Record IP doctor orders"),
+    ("ipd.discharge", "ipd", "discharge", "Discharge summary and cancel discharge"),
+    ("ipd.settle", "ipd", "settle", "Post daily charges and settle IP bills"),
+    ("ipd.certificate", "ipd", "certificate", "Issue medical certificates"),
 ]
 
 SCREENS = [
@@ -87,6 +95,7 @@ SCREENS = [
     ("pharmacy", "pharmacy", "Pharmacy", "/pharmacy", 95),
     ("laboratory", "laboratory", "Laboratory", "/laboratory", 96),
     ("radiology", "radiology", "Radiology", "/radiology", 97),
+    ("ipd", "ipd", "In-patient", "/ipd", 98),
 ]
 
 ROLE_DEFS = [
@@ -157,6 +166,14 @@ ROLE_PERMS = {
         "radiology.report",
         "radiology.authorize",
         "radiology.adjust",
+        "ipd.read",
+        "ipd.admit",
+        "ipd.transfer",
+        "ipd.nurse",
+        "ipd.order",
+        "ipd.discharge",
+        "ipd.settle",
+        "ipd.certificate",
     ],
     "RECEPTIONIST": [
         "home.view",
@@ -173,6 +190,12 @@ ROLE_PERMS = {
         "laboratory.register",
         "radiology.read",
         "radiology.register",
+        "ipd.read",
+        "ipd.admit",
+        "ipd.transfer",
+        "ipd.discharge",
+        "ipd.settle",
+        "ipd.certificate",
     ],
     "CASHIER": [
         "home.view",
@@ -188,6 +211,8 @@ ROLE_PERMS = {
         "laboratory.register",
         "radiology.read",
         "radiology.register",
+        "ipd.read",
+        "ipd.settle",
     ],
     "DOCTOR": [
         "home.view",
@@ -199,8 +224,21 @@ ROLE_PERMS = {
         "clinical.order",
         "laboratory.read",
         "radiology.read",
+        "ipd.read",
+        "ipd.order",
+        "ipd.discharge",
+        "ipd.certificate",
     ],
-    "NURSE": ["home.view", "patients.read", "clinical.read"],
+    "NURSE": [
+        "home.view",
+        "patients.read",
+        "clinical.read",
+        "ipd.read",
+        "ipd.nurse",
+        "ipd.admit",
+        "billing.collect",
+        "billing.read",
+    ],
     "LAB_TECH": [
         "home.view",
         "patients.read",
@@ -293,9 +331,11 @@ ROLE_SCREENS = {
         "emr",
         "laboratory",
         "radiology",
+        "ipd",
     ],
-    "CASHIER": ["home", "queue", "consult", "procedures", "billing", "laboratory", "radiology"],
-    "DOCTOR": ["home", "queue", "consult", "emr", "laboratory", "radiology"],
+    "CASHIER": ["home", "queue", "consult", "procedures", "billing", "laboratory", "radiology", "ipd"],
+    "DOCTOR": ["home", "queue", "consult", "emr", "laboratory", "radiology", "ipd"],
+    "NURSE": ["home", "ipd", "emr"],
     "LAB_TECH": ["home", "laboratory", "billing"],
     "LAB_AUTHORIZER": ["home", "laboratory", "emr"],
     "RAD_TECH": ["home", "radiology", "billing"],
@@ -311,6 +351,7 @@ DEMO_USERS = [
     ("receptionist", "RECEPTIONIST", "Rita", "Reception", False),
     ("cashier", "CASHIER", "Carl", "Cashier", False),
     ("doctor", "DOCTOR", "Dr. Divya", "Sharma", False),
+    ("nurse", "NURSE", "Nina", "Nurse", False),
     ("pharmacist", "PHARMACIST", "Priya", "Pharmacist", False),
     ("labtech", "LAB_TECH", "Lara", "LabTech", False),
     ("pathologist", "LAB_AUTHORIZER", "Dr. Path", "Authorizer", False),
@@ -601,12 +642,22 @@ def _seed_opd_masters(facility):
     for name in ("ER Ward", "General Ward", "ICU", "Step Down ICU", "Special Rooms"):
         RoomType.objects.update_or_create(facility=facility, name=name, defaults={"is_active": True})
     general = RoomType.objects.get(facility=facility, name="General Ward")
+    icu_type = RoomType.objects.get(facility=facility, name="ICU")
     ward, _ = Ward.objects.update_or_create(
         facility=facility, name="General Ward A", defaults={"room_type": general, "is_active": True}
     )
     room, _ = Room.objects.update_or_create(ward=ward, name="101", defaults={"is_active": True})
-    for code in ("101-A", "101-B"):
+    for code in ("101-A", "101-B", "101-C"):
         Bed.objects.update_or_create(room=room, code=code, defaults={"status": "VACANT", "is_active": True})
+    room2, _ = Room.objects.update_or_create(ward=ward, name="102", defaults={"is_active": True})
+    for code in ("102-A", "102-B"):
+        Bed.objects.update_or_create(room=room2, code=code, defaults={"status": "VACANT", "is_active": True})
+    icu_ward, _ = Ward.objects.update_or_create(
+        facility=facility, name="ICU-1", defaults={"room_type": icu_type, "is_active": True}
+    )
+    icu_room, _ = Room.objects.update_or_create(ward=icu_ward, name="ICU-1", defaults={"is_active": True})
+    for code in ("ICU-1A", "ICU-1B"):
+        Bed.objects.update_or_create(room=icu_room, code=code, defaults={"status": "VACANT", "is_active": True})
     Service.objects.update_or_create(
         facility=facility,
         code="NURSING",
