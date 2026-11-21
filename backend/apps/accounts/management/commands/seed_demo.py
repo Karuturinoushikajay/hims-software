@@ -49,6 +49,11 @@ PERMISSIONS = [
     ("clinical.read", "clinical", "read", "View clinical notes, timeline, and printouts"),
     ("clinical.write", "clinical", "write", "Record notes, allergies, prescriptions, and follow-ups"),
     ("clinical.order", "clinical", "order", "Order laboratory or radiology tests"),
+    ("pharmacy.read", "pharmacy", "read", "View pharmacy stock and sales"),
+    ("pharmacy.write", "pharmacy", "write", "Maintain drug master and suppliers"),
+    ("pharmacy.purchase", "pharmacy", "purchase", "Create purchase orders and receive goods"),
+    ("pharmacy.dispense", "pharmacy", "dispense", "Dispense, sell, and accept returns"),
+    ("pharmacy.adjust", "pharmacy", "adjust", "Adjust or dump stock"),
 ]
 
 SCREENS = [
@@ -65,6 +70,7 @@ SCREENS = [
     ("billing", "billing", "Billing", "/billing", 100),
     ("masters", "admin", "Masters", "/masters", 55),
     ("emr", "clinical", "Clinical record", "/emr", 85),
+    ("pharmacy", "pharmacy", "Pharmacy", "/pharmacy", 95),
 ]
 
 ROLE_DEFS = [
@@ -116,6 +122,11 @@ ROLE_PERMS = {
         "clinical.read",
         "clinical.write",
         "clinical.order",
+        "pharmacy.read",
+        "pharmacy.write",
+        "pharmacy.purchase",
+        "pharmacy.dispense",
+        "pharmacy.adjust",
     ],
     "RECEPTIONIST": [
         "home.view",
@@ -154,8 +165,26 @@ ROLE_PERMS = {
     "LAB_AUTHORIZER": ["home.view"],
     "RAD_TECH": ["home.view"],
     "RADIOLOGIST": ["home.view"],
-    "PHARMACIST": ["home.view"],
-    "STORE_KEEPER": ["home.view"],
+    "PHARMACIST": [
+        "home.view",
+        "patients.read",
+        "pharmacy.read",
+        "pharmacy.write",
+        "pharmacy.purchase",
+        "pharmacy.dispense",
+        "pharmacy.adjust",
+        "billing.collect",
+        "billing.read",
+        "billing.refund",
+        "clinical.read",
+    ],
+    "STORE_KEEPER": [
+        "home.view",
+        "pharmacy.read",
+        "pharmacy.write",
+        "pharmacy.purchase",
+        "pharmacy.adjust",
+    ],
     "ACCOUNTANT": [
         "home.view",
         "numbering.read",
@@ -180,6 +209,8 @@ ROLE_SCREENS = {
     "RECEPTIONIST": ["home", "register", "queue", "consult", "procedures", "billing", "emr"],
     "CASHIER": ["home", "queue", "consult", "procedures", "billing"],
     "DOCTOR": ["home", "queue", "consult", "emr"],
+    "PHARMACIST": ["home", "pharmacy", "billing"],
+    "STORE_KEEPER": ["home", "pharmacy"],
     "ACCOUNTANT": ["home", "billing"],
 }
 
@@ -189,6 +220,7 @@ DEMO_USERS = [
     ("receptionist", "RECEPTIONIST", "Rita", "Reception", False),
     ("cashier", "CASHIER", "Carl", "Cashier", False),
     ("doctor", "DOCTOR", "Dr. Divya", "Sharma", False),
+    ("pharmacist", "PHARMACIST", "Priya", "Pharmacist", False),
 ]
 
 
@@ -552,8 +584,15 @@ def _seed_clinical(facility):
         code="PARA500",
         defaults={
             "name": "Paracetamol 500 mg",
+            "brand_name": "Calpol 500",
             "generic_name": "Paracetamol",
             "schedule": "NONE",
+            "unit": "TAB",
+            "reorder_level": 50,
+            "purchase_price": Decimal("1.00"),
+            "selling_price": Decimal("2.00"),
+            "hsn_sac": "3004",
+            "tax_rate": Decimal("12.00"),
             "is_active": True,
         },
     )
@@ -562,8 +601,15 @@ def _seed_clinical(facility):
         code="IBU400",
         defaults={
             "name": "Ibuprofen 400 mg",
+            "brand_name": "Brufen 400",
             "generic_name": "Ibuprofen",
             "schedule": "H",
+            "unit": "TAB",
+            "reorder_level": 40,
+            "purchase_price": Decimal("1.50"),
+            "selling_price": Decimal("3.00"),
+            "hsn_sac": "3004",
+            "tax_rate": Decimal("12.00"),
             "is_active": True,
         },
     )
@@ -572,8 +618,15 @@ def _seed_clinical(facility):
         code="AMOX500",
         defaults={
             "name": "Amoxicillin 500 mg",
+            "brand_name": "Mox 500",
             "generic_name": "Amoxicillin",
             "schedule": "H",
+            "unit": "CAP",
+            "reorder_level": 30,
+            "purchase_price": Decimal("4.00"),
+            "selling_price": Decimal("8.00"),
+            "hsn_sac": "3004",
+            "tax_rate": Decimal("12.00"),
             "is_active": True,
         },
     )
@@ -582,8 +635,32 @@ def _seed_clinical(facility):
         code="OMEP20",
         defaults={
             "name": "Omeprazole 20 mg",
+            "brand_name": "Omez 20",
             "generic_name": "Omeprazole",
             "schedule": "H",
+            "unit": "CAP",
+            "reorder_level": 20,
+            "purchase_price": Decimal("3.00"),
+            "selling_price": Decimal("6.00"),
+            "hsn_sac": "3004",
+            "tax_rate": Decimal("12.00"),
+            "is_active": True,
+        },
+    )
+    Drug.objects.update_or_create(
+        facility=facility,
+        code="TRAM50",
+        defaults={
+            "name": "Tramadol 50 mg",
+            "brand_name": "Tramazac 50",
+            "generic_name": "Tramadol",
+            "schedule": "H1",
+            "unit": "CAP",
+            "reorder_level": 10,
+            "purchase_price": Decimal("5.00"),
+            "selling_price": Decimal("10.00"),
+            "hsn_sac": "3004",
+            "tax_rate": Decimal("12.00"),
             "is_active": True,
         },
     )
@@ -595,5 +672,12 @@ def _seed_clinical(facility):
             "severity": "MODERATE",
             "message": "Paracetamol with ibuprofen: confirm the combined regimen and monitor for adverse effects.",
         },
+    )
+    from apps.pharmacy.models import Supplier
+
+    Supplier.objects.update_or_create(
+        facility=facility,
+        name="MedSupply India",
+        defaults={"mobile": "9000000011", "gstin": "36AABCU9603R1ZM", "is_active": True},
     )
     _ = amox

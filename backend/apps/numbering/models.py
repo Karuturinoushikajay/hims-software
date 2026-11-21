@@ -17,6 +17,9 @@ class DocumentType(models.TextChoices):
     ADV = "ADV", "Advance"
     REF = "REF", "Refund"
     CN = "CN", "Credit Note"
+    PO = "PO", "Purchase Order"
+    GRN = "GRN", "Goods Receipt"
+    PHARM = "PHARM", "Pharmacy sale"
 
 
 class NumberSequence(UUIDModel, TimeStampedModel):

@@ -29,9 +29,8 @@ export function HomePage({ me }: { me: Me }) {
             </p>
           )}
           <p className="text-slate-500">
-            Masters, OPD, billing, and clinical EMR are live. Open Clinical record after a consultation
-            to capture notes, ICD diagnoses, prescriptions with allergy alerts, lab or radiology
-            orders, follow-ups, and attachments.
+            Through Phase 5: masters, OPD, billing, clinical EMR, and pharmacy (PO, GRN, FEFO
+            dispensing, returns, low-stock and near-expiry alerts, controlled-drug register).
             GST is calculated only after the facility GSTIN is confirmed. Referral commission runs only
             after the TDS rate is confirmed.
           </p>

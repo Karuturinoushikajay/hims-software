@@ -17,7 +17,7 @@ class IcdCode(UUIDModel, TimeStampedModel):
 
 
 class Drug(UUIDModel, TimeStampedModel):
-    """Minimal drug catalog for prescriptions. Phase 5 expands pharmacy and stock."""
+    """Drug / brand master used by prescriptions and pharmacy stock."""
 
     class Schedule(models.TextChoices):
         NONE = "NONE", "Unscheduled"
@@ -30,8 +30,15 @@ class Drug(UUIDModel, TimeStampedModel):
     )
     code = models.CharField(max_length=32)
     name = models.CharField(max_length=255)
+    brand_name = models.CharField(max_length=255, blank=True, default="")
     generic_name = models.CharField(max_length=255, blank=True, default="")
     schedule = models.CharField(max_length=16, choices=Schedule.choices, default=Schedule.NONE)
+    unit = models.CharField(max_length=32, blank=True, default="TAB")
+    reorder_level = models.PositiveIntegerField(default=0)
+    purchase_price = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    selling_price = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    hsn_sac = models.CharField(max_length=16, blank=True, default="")
+    tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     is_active = models.BooleanField(default=True)
 
     class Meta:

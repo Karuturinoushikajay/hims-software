@@ -125,6 +125,9 @@ def ensure_facility_sequences(facility: Facility, on_date: date | None = None) -
         DocumentType.ADV,
         DocumentType.REF,
         DocumentType.CN,
+        DocumentType.PO,
+        DocumentType.GRN,
+        DocumentType.PHARM,
     ):
         seq, _ = NumberSequence.objects.get_or_create(
             facility=facility,
