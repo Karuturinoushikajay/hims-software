@@ -174,7 +174,7 @@ Patients, tariffs, bills, GST math, clinical data, lab, pharmacy, IPD, report ex
 | 1 | Masters (departments through geography; editable at `/masters`) |
 | 2 | Patient and OPD |
 | 3 | Billing engine |
-| 4 | Clinical EMR |
+| 4 | Clinical EMR (notes, ICD, Rx alerts, orders, timeline at `/emr`) |
 | 5 | Pharmacy and inventory |
 | 6 | Laboratory (LIS) |
 | 7 | Radiology |

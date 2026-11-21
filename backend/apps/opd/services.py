@@ -149,7 +149,9 @@ def create_consultation(*, actor, facility, data: dict, idempotency_key: str = "
         after={"visit_no": visit.visit_no, "waived": waived},
     )
     return {
+        "id": str(visit.id),
         "visit_no": visit.visit_no,
+        "patient_id": str(visit.patient_id),
         "fee_waived_reason": visit.fee_waived_reason,
         "bill": bill_payload(bill) if bill else None,
         "commission_status": commission_status,

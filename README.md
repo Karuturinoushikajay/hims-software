@@ -4,7 +4,7 @@ Production-oriented HIMS for small and mid-size hospitals. India-first (GST, TDS
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for stack, module boundaries, billing design, and numbering rules.
 
-**Current phase:** Through Phase 3. Phase 1 masters (departments, doctors, services, wards and beds, tariffs, taxes, discount rules, payment modes, templates, geography) are editable at `/masters`. Phase 3 billing covers dues, advances, refunds, credit notes, GST when confirmed, printouts, shift and day close.
+**Current phase:** Through Phase 4. Masters at `/masters`. OPD registration and consultation. Billing (dues, advances, refunds, GST when confirmed, day close). Clinical EMR at `/emr` (notes, ICD-10, prescriptions with allergy and interaction alerts, lab/radiology order stubs, follow-ups, attachments, printable summary).
 
 Development runs natively on Windows (no Docker required). Docker files are optional and kept for later hosting work.
 

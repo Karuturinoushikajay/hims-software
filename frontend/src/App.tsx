@@ -11,6 +11,7 @@ import { SequencesPage } from "@/pages/SequencesPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ConsultPage } from "@/pages/ConsultPage";
 import { BillingPage } from "@/pages/BillingPage";
+import { EmrPage } from "@/pages/EmrPage";
 import { MastersPage } from "@/pages/MastersPage";
 import { ProceduresPage } from "@/pages/ProceduresPage";
 import { QueuePage } from "@/pages/QueuePage";
@@ -71,6 +72,7 @@ export default function App() {
         <Route path="/consult" element={<ConsultPage />} />
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/masters" element={<MastersPage />} />
+        <Route path="/emr" element={<EmrPage />} />
         <Route path="/procedures" element={<ProceduresPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

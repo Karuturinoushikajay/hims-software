@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/v1/", include("apps.opd.urls")),
     path("api/v1/", include("apps.billing.urls")),
     path("api/v1/", include("apps.masters.urls")),
+    path("api/v1/", include("apps.clinical.urls")),
 ]
 
 if settings.DEBUG:

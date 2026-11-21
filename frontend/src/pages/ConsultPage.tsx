@@ -18,7 +18,13 @@ type PatientSummary = {
   mobile: string;
   registration?: { expires_on: string } | null;
 };
-type Result = { visit_no: string; fee_waived_reason: string; bill: { bill_no: string; net_amount: string; due_amount: string; status: string } | null };
+type Result = {
+  id: string;
+  visit_no: string;
+  patient_id: string;
+  fee_waived_reason: string;
+  bill: { bill_no: string; net_amount: string; due_amount: string; status: string } | null;
+};
 
 export function ConsultPage() {
   const [params] = useSearchParams();
@@ -166,7 +172,7 @@ export function ConsultPage() {
       </Card>
       {result && (
         <Card>
-          <CardContent className="py-4 text-sm">
+          <CardContent className="space-y-2 py-4 text-sm">
             <p>Visit {result.visit_no}</p>
             {result.fee_waived_reason ? (
               <p>Fee waived: {result.fee_waived_reason}</p>
@@ -177,6 +183,9 @@ export function ConsultPage() {
                 </p>
               )
             )}
+            <Link className="inline-block text-brand-700 underline" to={`/emr?patient=${result.patient_id}&visit=${result.id}`}>
+              Open clinical record
+            </Link>
           </CardContent>
         </Card>
       )}

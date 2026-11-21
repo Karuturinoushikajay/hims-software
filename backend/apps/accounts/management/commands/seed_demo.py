@@ -46,6 +46,9 @@ PERMISSIONS = [
     ("billing.discount_authorize", "billing", "discount_authorize", "Approve a discount above the requester limit"),
     ("masters.read", "masters", "read", "View hospital masters"),
     ("masters.write", "masters", "write", "Create and update hospital masters"),
+    ("clinical.read", "clinical", "read", "View clinical notes, timeline, and printouts"),
+    ("clinical.write", "clinical", "write", "Record notes, allergies, prescriptions, and follow-ups"),
+    ("clinical.order", "clinical", "order", "Order laboratory or radiology tests"),
 ]
 
 SCREENS = [
@@ -61,6 +64,7 @@ SCREENS = [
     ("procedures", "opd", "Procedures", "/procedures", 90),
     ("billing", "billing", "Billing", "/billing", 100),
     ("masters", "admin", "Masters", "/masters", 55),
+    ("emr", "clinical", "Clinical record", "/emr", 85),
 ]
 
 ROLE_DEFS = [
@@ -109,6 +113,9 @@ ROLE_PERMS = {
         "billing.discount_authorize",
         "masters.read",
         "masters.write",
+        "clinical.read",
+        "clinical.write",
+        "clinical.order",
     ],
     "RECEPTIONIST": [
         "home.view",
@@ -120,6 +127,7 @@ ROLE_PERMS = {
         "billing.collect",
         "billing.read",
         "billing.refund",
+        "clinical.read",
     ],
     "CASHIER": [
         "home.view",
@@ -132,8 +140,16 @@ ROLE_PERMS = {
         "billing.refund",
         "billing.day_close",
     ],
-    "DOCTOR": ["home.view", "patients.read", "opd.appointment.manage", "opd.consult.create"],
-    "NURSE": ["home.view"],
+    "DOCTOR": [
+        "home.view",
+        "patients.read",
+        "opd.appointment.manage",
+        "opd.consult.create",
+        "clinical.read",
+        "clinical.write",
+        "clinical.order",
+    ],
+    "NURSE": ["home.view", "patients.read", "clinical.read"],
     "LAB_TECH": ["home.view"],
     "LAB_AUTHORIZER": ["home.view"],
     "RAD_TECH": ["home.view"],
@@ -161,9 +177,9 @@ ROLE_PERMS = {
 ROLE_SCREENS = {
     "SUPER_ADMIN": [s[0] for s in SCREENS],
     "FACILITY_ADMIN": [s[0] for s in SCREENS],
-    "RECEPTIONIST": ["home", "register", "queue", "consult", "procedures", "billing"],
+    "RECEPTIONIST": ["home", "register", "queue", "consult", "procedures", "billing", "emr"],
     "CASHIER": ["home", "queue", "consult", "procedures", "billing"],
-    "DOCTOR": ["home", "queue", "consult"],
+    "DOCTOR": ["home", "queue", "consult", "emr"],
     "ACCOUNTANT": ["home", "billing"],
 }
 
@@ -515,3 +531,69 @@ def _seed_opd_masters(facility):
         name="Outpatient services",
         defaults={"hsn_sac": "9993", "rate_percent": Decimal("18.00"), "is_active": True},
     )
+    _seed_clinical(facility)
+
+
+def _seed_clinical(facility):
+    from apps.clinical.models import Drug, DrugInteraction, IcdCode
+
+    # Small reviewed starter set only — not a full ICD or formulary catalog.
+    for code, name in (
+        ("J06.9", "Acute upper respiratory infection, unspecified"),
+        ("I10", "Essential (primary) hypertension"),
+        ("E11.9", "Type 2 diabetes mellitus without complications"),
+        ("K21.0", "Gastro-oesophageal reflux disease with oesophagitis"),
+        ("M54.5", "Low back pain"),
+    ):
+        IcdCode.objects.update_or_create(code=code, defaults={"name": name, "is_active": True})
+
+    para, _ = Drug.objects.update_or_create(
+        facility=facility,
+        code="PARA500",
+        defaults={
+            "name": "Paracetamol 500 mg",
+            "generic_name": "Paracetamol",
+            "schedule": "NONE",
+            "is_active": True,
+        },
+    )
+    ibuprofen, _ = Drug.objects.update_or_create(
+        facility=facility,
+        code="IBU400",
+        defaults={
+            "name": "Ibuprofen 400 mg",
+            "generic_name": "Ibuprofen",
+            "schedule": "H",
+            "is_active": True,
+        },
+    )
+    amox, _ = Drug.objects.update_or_create(
+        facility=facility,
+        code="AMOX500",
+        defaults={
+            "name": "Amoxicillin 500 mg",
+            "generic_name": "Amoxicillin",
+            "schedule": "H",
+            "is_active": True,
+        },
+    )
+    Drug.objects.update_or_create(
+        facility=facility,
+        code="OMEP20",
+        defaults={
+            "name": "Omeprazole 20 mg",
+            "generic_name": "Omeprazole",
+            "schedule": "H",
+            "is_active": True,
+        },
+    )
+    DrugInteraction.objects.update_or_create(
+        facility=facility,
+        drug_a=para,
+        drug_b=ibuprofen,
+        defaults={
+            "severity": "MODERATE",
+            "message": "Paracetamol with ibuprofen: confirm the combined regimen and monitor for adverse effects.",
+        },
+    )
+    _ = amox
