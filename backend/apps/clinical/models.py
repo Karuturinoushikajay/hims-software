@@ -158,7 +158,7 @@ class PrescriptionItem(UUIDModel, TimeStampedModel):
 
 
 class ClinicalOrder(UUIDModel, TimeStampedModel):
-    """Lab or radiology order. Fulfillment is Phases 6 and 7."""
+    """Lab or radiology order. Lab fulfillment is Phase 6; radiology fulfillment is Phase 7."""
 
     class Kind(models.TextChoices):
         LAB = "LAB", "Laboratory"
@@ -166,6 +166,8 @@ class ClinicalOrder(UUIDModel, TimeStampedModel):
 
     class Status(models.TextChoices):
         ORDERED = "ORDERED", "Ordered"
+        IN_PROGRESS = "IN_PROGRESS", "In progress"
+        COMPLETED = "COMPLETED", "Completed"
         CANCELLED = "CANCELLED", "Cancelled"
 
     visit = models.ForeignKey("opd.Visit", on_delete=models.CASCADE, related_name="clinical_orders")

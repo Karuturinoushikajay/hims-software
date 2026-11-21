@@ -1,0 +1,55 @@
+from django.urls import path
+
+from apps.radiology.views import (
+    AuthorizeView,
+    CancelView,
+    CatalogView,
+    CompleteView,
+    ConsumableAdjustView,
+    ConsumableView,
+    DispatchView,
+    OrderDetailView,
+    OrderView,
+    ReportPdfView,
+    ReportView,
+    ScheduleBoardView,
+    ScheduleView,
+    StartView,
+    TemplateView,
+    TestConsumableLinkView,
+    TestView,
+    WorklistView,
+)
+
+urlpatterns = [
+    path("radiology/catalog", CatalogView.as_view(), name="rad-catalog"),
+    path("radiology/tests", TestView.as_view(), name="rad-tests"),
+    path(
+        "radiology/tests/<uuid:test_id>/consumables",
+        TestConsumableLinkView.as_view(),
+        name="rad-test-consumables",
+    ),
+    path("radiology/templates", TemplateView.as_view(), name="rad-templates"),
+    path("radiology/consumables", ConsumableView.as_view(), name="rad-consumables"),
+    path(
+        "radiology/consumables/adjust",
+        ConsumableAdjustView.as_view(),
+        name="rad-consumable-adjust",
+    ),
+    path("radiology/orders", OrderView.as_view(), name="rad-orders"),
+    path("radiology/orders/<uuid:order_id>", OrderDetailView.as_view(), name="rad-order"),
+    path(
+        "radiology/orders/<uuid:order_id>/pdf",
+        ReportPdfView.as_view(),
+        name="rad-order-pdf",
+    ),
+    path("radiology/worklist", WorklistView.as_view(), name="rad-worklist"),
+    path("radiology/schedule-board", ScheduleBoardView.as_view(), name="rad-schedule-board"),
+    path("radiology/items/<uuid:item_id>/schedule", ScheduleView.as_view(), name="rad-schedule"),
+    path("radiology/items/<uuid:item_id>/start", StartView.as_view(), name="rad-start"),
+    path("radiology/items/<uuid:item_id>/complete", CompleteView.as_view(), name="rad-complete"),
+    path("radiology/items/<uuid:item_id>/report", ReportView.as_view(), name="rad-report"),
+    path("radiology/items/<uuid:item_id>/authorize", AuthorizeView.as_view(), name="rad-authorize"),
+    path("radiology/items/<uuid:item_id>/dispatch", DispatchView.as_view(), name="rad-dispatch"),
+    path("radiology/items/<uuid:item_id>/cancel", CancelView.as_view(), name="rad-cancel"),
+]

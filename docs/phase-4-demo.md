@@ -12,4 +12,4 @@ Sign in as `doctor` (password from `DEMO_SEED_PASSWORD`, demo default `ChangeMeD
 8. Confirm the left timeline shows the visit, note, orders, follow-up, and allergy banner.
 
 Cashier can open the timeline (read) but cannot save clinical notes.
-Lab and radiology fulfillment is Phase 6 and 7; Phase 4 only places the order.
+Lab fulfillment is Phase 6 (`/laboratory`); radiology fulfillment is Phase 7 (`/radiology`). Phase 4 only places the clinical order.

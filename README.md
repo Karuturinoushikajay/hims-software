@@ -4,7 +4,7 @@ Production-oriented HIMS for small and mid-size hospitals. India-first (GST, TDS
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for stack, module boundaries, billing design, and numbering rules.
 
-**Current phase:** Through Phase 5. Masters, OPD, billing, clinical EMR at `/emr`, and pharmacy at `/pharmacy` (drug master, suppliers, purchase orders, GRN, FEFO dispensing, returns, stock dump, low-stock / near-expiry alerts, controlled-drug register, patient bill posting).
+**Current phase:** Through Phase 7. Masters, OPD, billing, clinical EMR at `/emr`, pharmacy at `/pharmacy`, laboratory at `/laboratory`, and radiology at `/radiology` (test master, scheduling, report templates, authorization, consumables, PDF reports, billing).
 
 Development runs natively on Windows (no Docker required). Docker files are optional and kept for later hosting work.
 
@@ -76,8 +76,13 @@ Demo users (password from `DEMO_SEED_PASSWORD`):
 | `receptionist` | Receptionist |
 | `cashier` | Cashier |
 | `doctor` | Doctor |
+| `pharmacist` | Pharmacist |
+| `labtech` | Lab Technician |
+| `pathologist` | Lab Pathologist/Authorizer |
+| `radtech` | Radiology Technician |
+| `radiologist` | Radiologist |
 
-Demo walkthrough: [docs/phase-0-demo.md](docs/phase-0-demo.md).
+Demo walkthroughs: [docs/phase-0-demo.md](docs/phase-0-demo.md) … [docs/phase-7-demo.md](docs/phase-7-demo.md).
 
 ## Tests
 

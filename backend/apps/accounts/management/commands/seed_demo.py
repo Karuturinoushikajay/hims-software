@@ -54,6 +54,20 @@ PERMISSIONS = [
     ("pharmacy.purchase", "pharmacy", "purchase", "Create purchase orders and receive goods"),
     ("pharmacy.dispense", "pharmacy", "dispense", "Dispense, sell, and accept returns"),
     ("pharmacy.adjust", "pharmacy", "adjust", "Adjust or dump stock"),
+    ("laboratory.read", "laboratory", "read", "View lab orders, worklists, and reports"),
+    ("laboratory.write", "laboratory", "write", "Maintain lab tests, packages, and reagents"),
+    ("laboratory.register", "laboratory", "register", "Register lab orders and cancel items"),
+    ("laboratory.collect", "laboratory", "collect", "Collect and receive samples"),
+    ("laboratory.result", "laboratory", "result", "Enter and verify lab results"),
+    ("laboratory.authorize", "laboratory", "authorize", "Authorize, amend, and dispatch reports"),
+    ("laboratory.adjust", "laboratory", "adjust", "Adjust reagent stock"),
+    ("radiology.read", "radiology", "read", "View radiology orders, schedule, and reports"),
+    ("radiology.write", "radiology", "write", "Maintain radiology tests, templates, and consumables"),
+    ("radiology.register", "radiology", "register", "Register radiology orders and cancel items"),
+    ("radiology.schedule", "radiology", "schedule", "Schedule and acquire radiology studies"),
+    ("radiology.report", "radiology", "report", "Draft radiology reports"),
+    ("radiology.authorize", "radiology", "authorize", "Authorize and dispatch radiology reports"),
+    ("radiology.adjust", "radiology", "adjust", "Adjust radiology consumable stock"),
 ]
 
 SCREENS = [
@@ -71,6 +85,8 @@ SCREENS = [
     ("masters", "admin", "Masters", "/masters", 55),
     ("emr", "clinical", "Clinical record", "/emr", 85),
     ("pharmacy", "pharmacy", "Pharmacy", "/pharmacy", 95),
+    ("laboratory", "laboratory", "Laboratory", "/laboratory", 96),
+    ("radiology", "radiology", "Radiology", "/radiology", 97),
 ]
 
 ROLE_DEFS = [
@@ -127,6 +143,20 @@ ROLE_PERMS = {
         "pharmacy.purchase",
         "pharmacy.dispense",
         "pharmacy.adjust",
+        "laboratory.read",
+        "laboratory.write",
+        "laboratory.register",
+        "laboratory.collect",
+        "laboratory.result",
+        "laboratory.authorize",
+        "laboratory.adjust",
+        "radiology.read",
+        "radiology.write",
+        "radiology.register",
+        "radiology.schedule",
+        "radiology.report",
+        "radiology.authorize",
+        "radiology.adjust",
     ],
     "RECEPTIONIST": [
         "home.view",
@@ -139,6 +169,10 @@ ROLE_PERMS = {
         "billing.read",
         "billing.refund",
         "clinical.read",
+        "laboratory.read",
+        "laboratory.register",
+        "radiology.read",
+        "radiology.register",
     ],
     "CASHIER": [
         "home.view",
@@ -150,6 +184,10 @@ ROLE_PERMS = {
         "billing.read",
         "billing.refund",
         "billing.day_close",
+        "laboratory.read",
+        "laboratory.register",
+        "radiology.read",
+        "radiology.register",
     ],
     "DOCTOR": [
         "home.view",
@@ -159,12 +197,51 @@ ROLE_PERMS = {
         "clinical.read",
         "clinical.write",
         "clinical.order",
+        "laboratory.read",
+        "radiology.read",
     ],
     "NURSE": ["home.view", "patients.read", "clinical.read"],
-    "LAB_TECH": ["home.view"],
-    "LAB_AUTHORIZER": ["home.view"],
-    "RAD_TECH": ["home.view"],
-    "RADIOLOGIST": ["home.view"],
+    "LAB_TECH": [
+        "home.view",
+        "patients.read",
+        "laboratory.read",
+        "laboratory.write",
+        "laboratory.register",
+        "laboratory.collect",
+        "laboratory.result",
+        "laboratory.adjust",
+        "billing.collect",
+        "billing.read",
+    ],
+    "LAB_AUTHORIZER": [
+        "home.view",
+        "patients.read",
+        "laboratory.read",
+        "laboratory.write",
+        "laboratory.result",
+        "laboratory.authorize",
+        "clinical.read",
+    ],
+    "RAD_TECH": [
+        "home.view",
+        "patients.read",
+        "radiology.read",
+        "radiology.write",
+        "radiology.register",
+        "radiology.schedule",
+        "radiology.adjust",
+        "billing.collect",
+        "billing.read",
+    ],
+    "RADIOLOGIST": [
+        "home.view",
+        "patients.read",
+        "radiology.read",
+        "radiology.write",
+        "radiology.report",
+        "radiology.authorize",
+        "clinical.read",
+    ],
     "PHARMACIST": [
         "home.view",
         "patients.read",
@@ -206,9 +283,23 @@ ROLE_PERMS = {
 ROLE_SCREENS = {
     "SUPER_ADMIN": [s[0] for s in SCREENS],
     "FACILITY_ADMIN": [s[0] for s in SCREENS],
-    "RECEPTIONIST": ["home", "register", "queue", "consult", "procedures", "billing", "emr"],
-    "CASHIER": ["home", "queue", "consult", "procedures", "billing"],
-    "DOCTOR": ["home", "queue", "consult", "emr"],
+    "RECEPTIONIST": [
+        "home",
+        "register",
+        "queue",
+        "consult",
+        "procedures",
+        "billing",
+        "emr",
+        "laboratory",
+        "radiology",
+    ],
+    "CASHIER": ["home", "queue", "consult", "procedures", "billing", "laboratory", "radiology"],
+    "DOCTOR": ["home", "queue", "consult", "emr", "laboratory", "radiology"],
+    "LAB_TECH": ["home", "laboratory", "billing"],
+    "LAB_AUTHORIZER": ["home", "laboratory", "emr"],
+    "RAD_TECH": ["home", "radiology", "billing"],
+    "RADIOLOGIST": ["home", "radiology", "emr"],
     "PHARMACIST": ["home", "pharmacy", "billing"],
     "STORE_KEEPER": ["home", "pharmacy"],
     "ACCOUNTANT": ["home", "billing"],
@@ -221,6 +312,10 @@ DEMO_USERS = [
     ("cashier", "CASHIER", "Carl", "Cashier", False),
     ("doctor", "DOCTOR", "Dr. Divya", "Sharma", False),
     ("pharmacist", "PHARMACIST", "Priya", "Pharmacist", False),
+    ("labtech", "LAB_TECH", "Lara", "LabTech", False),
+    ("pathologist", "LAB_AUTHORIZER", "Dr. Path", "Authorizer", False),
+    ("radtech", "RAD_TECH", "Ravi", "RadTech", False),
+    ("radiologist", "RADIOLOGIST", "Dr. Radha", "Radiologist", False),
 ]
 
 
@@ -681,3 +776,311 @@ def _seed_clinical(facility):
         defaults={"mobile": "9000000011", "gstin": "36AABCU9603R1ZM", "is_active": True},
     )
     _ = amox
+
+    from apps.laboratory.models import (
+        FieldType,
+        GenderScope,
+        LabDepartment,
+        LabPackage,
+        LabReagent,
+        LabReferenceRange,
+        LabTest,
+        LabTestField,
+        LabTestReagent,
+    )
+
+    cbc, _ = LabTest.objects.update_or_create(
+        facility=facility,
+        code="CBC",
+        defaults={
+            "name": "Complete blood count",
+            "department": LabDepartment.HEMATOLOGY,
+            "price": Decimal("350.00"),
+            "tax_rate": Decimal("0.00"),
+            "turnaround_hours": 6,
+            "delta_absolute": Decimal("2.0"),
+            "delta_percent": Decimal("20.00"),
+            "is_active": True,
+        },
+    )
+    hb_field, _ = LabTestField.objects.update_or_create(
+        test=cbc,
+        name="Hemoglobin",
+        defaults={
+            "field_type": FieldType.QUANTITATIVE,
+            "unit": "g/dL",
+            "sort_order": 1,
+        },
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=hb_field,
+        gender=GenderScope.MALE,
+        age_min_days=6570,
+        age_max_days=36500,
+        defaults={
+            "low": Decimal("13.0"),
+            "high": Decimal("17.0"),
+            "critical_low": Decimal("7.0"),
+            "critical_high": Decimal("20.0"),
+        },
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=hb_field,
+        gender=GenderScope.FEMALE,
+        age_min_days=6570,
+        age_max_days=36500,
+        defaults={
+            "low": Decimal("12.0"),
+            "high": Decimal("15.0"),
+            "critical_low": Decimal("7.0"),
+            "critical_high": Decimal("20.0"),
+        },
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=hb_field,
+        gender=GenderScope.ANY,
+        age_min_days=0,
+        age_max_days=6569,
+        defaults={
+            "low": Decimal("11.0"),
+            "high": Decimal("14.0"),
+            "critical_low": Decimal("7.0"),
+            "critical_high": Decimal("18.0"),
+        },
+    )
+    wbc_field, _ = LabTestField.objects.update_or_create(
+        test=cbc,
+        name="WBC",
+        defaults={"field_type": FieldType.QUANTITATIVE, "unit": "10^3/uL", "sort_order": 2},
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=wbc_field,
+        gender=GenderScope.ANY,
+        age_min_days=0,
+        age_max_days=36500,
+        defaults={"low": Decimal("4.0"), "high": Decimal("11.0"), "critical_low": Decimal("2.0"), "critical_high": Decimal("30.0")},
+    )
+
+    hba1c, _ = LabTest.objects.update_or_create(
+        facility=facility,
+        code="HBA1C",
+        defaults={
+            "name": "HbA1c",
+            "department": LabDepartment.BIOCHEMISTRY,
+            "price": Decimal("500.00"),
+            "tax_rate": Decimal("0.00"),
+            "turnaround_hours": 24,
+            "delta_percent": Decimal("15.00"),
+            "is_active": True,
+        },
+    )
+    a1c_field, _ = LabTestField.objects.update_or_create(
+        test=hba1c,
+        name="HbA1c",
+        defaults={"field_type": FieldType.QUANTITATIVE, "unit": "%", "sort_order": 1},
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=a1c_field,
+        gender=GenderScope.ANY,
+        age_min_days=0,
+        age_max_days=36500,
+        defaults={
+            "low": Decimal("4.0"),
+            "high": Decimal("5.6"),
+            "critical_high": Decimal("14.0"),
+        },
+    )
+
+    blood_group, _ = LabTest.objects.update_or_create(
+        facility=facility,
+        code="BG",
+        defaults={
+            "name": "Blood group",
+            "department": LabDepartment.PATHOLOGY,
+            "price": Decimal("150.00"),
+            "is_outsourced": False,
+            "is_active": True,
+        },
+    )
+    bg_field, _ = LabTestField.objects.update_or_create(
+        test=blood_group,
+        name="ABO Rh",
+        defaults={"field_type": FieldType.QUALITATIVE, "unit": "", "sort_order": 1},
+    )
+    LabReferenceRange.objects.update_or_create(
+        field=bg_field,
+        gender=GenderScope.ANY,
+        age_min_days=0,
+        age_max_days=36500,
+        defaults={"qualitative_normal": ""},
+    )
+
+    outsourced, _ = LabTest.objects.update_or_create(
+        facility=facility,
+        code="GENE",
+        defaults={
+            "name": "Genetic panel (outsourced)",
+            "department": LabDepartment.PATHOLOGY,
+            "price": Decimal("2500.00"),
+            "is_outsourced": True,
+            "outsource_lab": "RefLab Hyderabad",
+            "turnaround_hours": 120,
+            "is_active": True,
+        },
+    )
+    LabTestField.objects.update_or_create(
+        test=outsourced,
+        name="Report summary",
+        defaults={"field_type": FieldType.DESCRIPTIVE, "sort_order": 1},
+    )
+
+    pkg, _ = LabPackage.objects.update_or_create(
+        facility=facility,
+        code="HEMOGRAM",
+        defaults={"name": "Hemogram package", "price": Decimal("450.00"), "is_active": True},
+    )
+    pkg.tests.set([cbc, blood_group])
+
+    reagent, _ = LabReagent.objects.update_or_create(
+        facility=facility,
+        name="CBC Diluent",
+        defaults={
+            "unit": "ML",
+            "quantity_on_hand": Decimal("500.000"),
+            "reorder_level": Decimal("50.000"),
+            "is_active": True,
+        },
+    )
+    LabTestReagent.objects.update_or_create(
+        test=cbc, reagent=reagent, defaults={"quantity_per_test": Decimal("2.000")}
+    )
+
+    from apps.radiology.models import (
+        RadiologyConsumable,
+        RadiologyDepartment,
+        RadiologyReportTemplate,
+        RadiologyTest,
+        RadiologyTestConsumable,
+    )
+
+    cxr, _ = RadiologyTest.objects.update_or_create(
+        facility=facility,
+        code="CXR",
+        defaults={
+            "name": "Chest X-ray PA",
+            "description": "Posteroanterior chest radiograph",
+            "instruction": "Remove metallic objects from the chest. Hold breath on inspiration.",
+            "department": RadiologyDepartment.RADIOLOGY,
+            "price": Decimal("400.00"),
+            "hospital_share": Decimal("300.00"),
+            "doctor_share": Decimal("100.00"),
+            "duration_minutes": 15,
+            "is_active": True,
+        },
+    )
+    usg, _ = RadiologyTest.objects.update_or_create(
+        facility=facility,
+        code="USGABD",
+        defaults={
+            "name": "Ultrasound abdomen",
+            "description": "Abdominal ultrasonography",
+            "instruction": "Fasting 6 hours preferred.",
+            "department": RadiologyDepartment.ULTRASONOGRAPHY,
+            "price": Decimal("800.00"),
+            "hospital_share": Decimal("500.00"),
+            "doctor_share": Decimal("300.00"),
+            "duration_minutes": 30,
+            "is_active": True,
+        },
+    )
+    ct_brain, _ = RadiologyTest.objects.update_or_create(
+        facility=facility,
+        code="CTBRAIN",
+        defaults={
+            "name": "CT Brain plain",
+            "description": "Non-contrast CT head",
+            "instruction": "Remove jewellery; screen for prior contrast allergy if contrast planned later.",
+            "department": RadiologyDepartment.CT,
+            "price": Decimal("2500.00"),
+            "hospital_share": Decimal("1800.00"),
+            "doctor_share": Decimal("700.00"),
+            "duration_minutes": 20,
+            "is_active": True,
+        },
+    )
+    RadiologyTest.objects.update_or_create(
+        facility=facility,
+        code="MRIKNEE",
+        defaults={
+            "name": "MRI Knee",
+            "description": "MRI of the knee joint",
+            "instruction": "MRI safety questionnaire mandatory. Remove all metal.",
+            "department": RadiologyDepartment.MRI,
+            "price": Decimal("4500.00"),
+            "hospital_share": Decimal("3200.00"),
+            "doctor_share": Decimal("1300.00"),
+            "duration_minutes": 45,
+            "is_active": True,
+        },
+    )
+
+    gel, _ = RadiologyConsumable.objects.update_or_create(
+        facility=facility,
+        name="USG gel",
+        defaults={
+            "unit": "ML",
+            "quantity_on_hand": Decimal("1000.000"),
+            "reorder_level": Decimal("100.000"),
+            "is_active": True,
+        },
+    )
+    film, _ = RadiologyConsumable.objects.update_or_create(
+        facility=facility,
+        name="X-ray film cassette use",
+        defaults={
+            "unit": "UNIT",
+            "quantity_on_hand": Decimal("200.000"),
+            "reorder_level": Decimal("20.000"),
+            "is_active": True,
+        },
+    )
+    RadiologyTestConsumable.objects.update_or_create(
+        test=usg, consumable=gel, defaults={"quantity_per_study": Decimal("20.000")}
+    )
+    RadiologyTestConsumable.objects.update_or_create(
+        test=cxr, consumable=film, defaults={"quantity_per_study": Decimal("1.000")}
+    )
+
+    RadiologyReportTemplate.objects.update_or_create(
+        facility=facility,
+        code="CXR_NORMAL",
+        defaults={
+            "name": "Chest X-ray normal template",
+            "department": RadiologyDepartment.RADIOLOGY,
+            "test": cxr,
+            "findings_template": (
+                "The lung fields are clear. Cardiac silhouette is within normal limits. "
+                "Both costophrenic angles are clear. Bony thorax appears intact."
+            ),
+            "impression_template": "No significant radiographic abnormality detected.",
+            "is_active": True,
+        },
+    )
+    RadiologyReportTemplate.objects.update_or_create(
+        facility=facility,
+        code="USG_ABD",
+        defaults={
+            "name": "USG abdomen template",
+            "department": RadiologyDepartment.ULTRASONOGRAPHY,
+            "test": usg,
+            "findings_template": (
+                "Liver: normal size and echotexture. No focal lesion.\n"
+                "Gall bladder: normal. No calculi.\n"
+                "Pancreas and spleen: normal.\n"
+                "Kidneys: normal size and echotexture bilaterally. No hydronephrosis."
+            ),
+            "impression_template": "Normal abdominal ultrasound study.",
+            "is_active": True,
+        },
+    )
+    _ = ct_brain

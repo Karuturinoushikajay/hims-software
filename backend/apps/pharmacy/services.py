@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import F, Sum
 
@@ -44,8 +45,8 @@ def _patient(facility, patient_id) -> Patient | None:
     if not patient_id:
         return None
     try:
-        return Patient.objects.get(id=patient_id, organization=facility.organization)
-    except Patient.DoesNotExist as exc:
+        return Patient.objects.get(id=str(patient_id).strip(), organization=facility.organization)
+    except (Patient.DoesNotExist, ValidationError, ValueError) as exc:
         raise AppError("Patient not found.", code="not_found") from exc
 
 

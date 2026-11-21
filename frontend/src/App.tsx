@@ -13,9 +13,11 @@ import { ConsultPage } from "@/pages/ConsultPage";
 import { BillingPage } from "@/pages/BillingPage";
 import { EmrPage } from "@/pages/EmrPage";
 import { MastersPage } from "@/pages/MastersPage";
+import { LaboratoryPage } from "@/pages/LaboratoryPage";
 import { PharmacyPage } from "@/pages/PharmacyPage";
 import { ProceduresPage } from "@/pages/ProceduresPage";
 import { QueuePage } from "@/pages/QueuePage";
+import { RadiologyPage } from "@/pages/RadiologyPage";
 import { RegisterPage } from "@/pages/RegisterPage";
 import { UsersPage } from "@/pages/UsersPage";
 
@@ -75,6 +77,8 @@ export default function App() {
         <Route path="/masters" element={<MastersPage />} />
         <Route path="/emr" element={<EmrPage />} />
         <Route path="/pharmacy" element={<PharmacyPage />} />
+        <Route path="/laboratory" element={<LaboratoryPage />} />
+        <Route path="/radiology" element={<RadiologyPage />} />
         <Route path="/procedures" element={<ProceduresPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

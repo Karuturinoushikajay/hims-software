@@ -176,8 +176,8 @@ Patients, tariffs, bills, GST math, clinical data, lab, pharmacy, IPD, report ex
 | 3 | Billing engine |
 | 4 | Clinical EMR (notes, ICD, Rx alerts, orders, timeline at `/emr`) |
 | 5 | Pharmacy and inventory (FEFO stock, PO/GRN, sales at `/pharmacy`) |
-| 6 | Laboratory (LIS) |
-| 7 | Radiology |
+| 6 | Laboratory / LIS (tests, packages, sample lifecycle, results, reagents, PDF at `/laboratory`) |
+| 7 | Radiology (tests, schedule, report templates, consumables, PDF at `/radiology`) |
 | 8 | In-Patient |
 | 9 | Accounting, reports, dashboards |
 | 10 | Insurance, OT, portal, ABDM, AI-assist |
